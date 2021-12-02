@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-
+#include "Components/TimelineComponent.h"
+#include "Components/BoxComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "InteractableThing.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/Character.h"
 #include "Door.generated.h"
 
 class USceneComponent;
@@ -35,7 +36,13 @@ public:
 	class UStaticMeshComponent* TheMeshDoor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	class UBoxComponent* Collider;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class UInstancedStaticMeshComponent* TheMeshFrame;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Door Stuff")
+	UCurveFloat* doorOpenCurve;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Door Stuff")
 	float WidthOfDoor = 200;
@@ -51,10 +58,16 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UTimelineComponent* DoorAnim;
+
+	bool IsDoorFlipped = false;
+	bool IsDoorOpen = false;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnConstruction(const FTransform &xform) override;
-
-	virtual void Interact();
+	UFUNCTION()
+	void OnAnimUpdate(float val);
+	void Interact();
 };
